@@ -1,6 +1,8 @@
 % LaTeX template for ECE2031
 % Atneya Nair 
 % 2020
+% Some font and package installation may be required. MikTex or texlive-extra fonts is recommended. 
+
 \documentclass[letterpaper,11pt]{article}
 \usepackage[english]{babel}
 \usepackage[margin=1in,footskip=0.25in]{geometry}
@@ -21,10 +23,16 @@ labelsep=period]{caption}
 \usepackage[title, titletoc]{appendix} % appendices
 \usepackage{pdflscape} % landscape
 
-% Some font installation may be required. MikTex or texlive-extra fonts is recommended. 
+\makeatletter
+\g@addto@macro\@floatboxreset{\centering} % Center all floats 
+\makeatother
+
 
 % New page after section end
 \newcommand{\sectionbreak}{\clearpage}
+
+% Anchor floats
+\floatplacement{}{H}
 
 % Table caption custom format
 \DeclareCaptionFormat{centered}{%
@@ -46,8 +54,13 @@ labelsep=period]{caption}
 % Scale images greedily while maintaining aspect ratio. 
 \setkeys{Gin}{width=\textwidth,height=\textheight,keepaspectratio}
 
-
-
+% Convenience macro for figure insertion
+\newcommand{\labfig}[2]{ %arg1 - fig path, arg2 - caption
+\begin{figure}
+\includegraphics{#1}
+\caption{#2}
+\end{figure}
+}
 
 %
 \begin{document}
@@ -68,29 +81,25 @@ labelsep=period]{caption}
 
 \section{Results}
 
-% Figures should not float per formatting specification, so we use the H specifier for all figures.
-\begin{figure}[H]
-   \centering
+
+\begin{figure}
    \includegraphics{simple_circuit.png} % from ./results/
       \caption{Schematic with FPGA pin assignments of circuit implementing $Y = AB + C$.} % One line caption, correctly formatted by setup
 \end{figure}   
 
-\begin{figure}[H]
-   \centering % Necessary since centered figures are required.
-   \includegraphics{complicated_circuit.png}
-      \caption{Circuit to light LED G8 when robot motors are enabled, and flash it at 10Hz when robot battery voltage is below minimum threshold.} % Longer two line caption. 
-\end{figure}   
+
+
+\labfig{complicated_circuit.png}{Circuit to light LED G8 when robot motors are enabled, and flash it at 10Hz when robot battery voltage is below minimum threshold.} % Using labfig macro to simplify figure insertion. This caption is also two lines 
 
 \begin{landscape} % Correctly rotated landscape page (assuming single-sided printing). 
 \begin{figure}
-	\centering
 	\includegraphics{landscape_figure.png}
 	  \caption{Functional simulation waveform of state machine with three states, 2-bit input X, and 1-bit output Z. The input vector provides 100\% coverage of state transitions to prove correct behavior of the state machine, including assertion of Z in state '10 This figure should be properly rotated for both digital viewing and printing.}
 \end{figure}
 \end{landscape}
 
-\begin{figure}[H] % An explicitly inserted code fragment. See appendix for file import. Whitespace should be correctly pasted, as LaTeX follows whitespace verbatim.
-	\centering % default listing language is VHDL for highlighting
+\begin{figure} % An explicitly inserted code fragment. See appendix for file import. Whitespace should be correctly pasted, as LaTeX follows whitespace verbatim.
+% default listing language is VHDL for highlighting
 	\begin{lstlisting} 
 	-- ORGATE.VHD (VHDL)
 	-- This code produces a negative-logic OR circuit
@@ -116,7 +125,7 @@ labelsep=period]{caption}
 	\caption{VHDL code representing a three state, two input FSM satisfying the assigned state transitions, which outputs high only in state C.} % Captioning is treated like any other figure.
 \end{figure}
 
-\begin{table}[H] % Explicitly inserted table, with correct caption (title) format from setup.
+\begin{table} % Explicitly inserted table, with correct caption (title) format from setup.
       \caption{Truth Table for $Y = \overline{ABC}$ With Highlights} % Below is a regular LaTeX array with some special formatting.
       % Replace values between ampersands and double slashes to change the data. Add a |c to add an additional column, as well as an additional & [value] in every row. The rest of the commands in the array are just visual flavor.
      $$ 
@@ -142,8 +151,7 @@ labelsep=period]{caption}
      $$ 
 \end{table}
 
-\begin{table}[H]
-	  \centering
+\begin{table}
       \caption{Truth Table for $Y = \overline{ABCD}$ From CSV} % We use the csvreader command to import a table from a standard CSV. Noteworthy parameters are explained below.
       \csvreader[
       	tabular=c|c,%Change tabular pre-amble i.e. additional 'c' for more centered columns, r/l for differently aligned, pipes/spaces to change the delimeter
